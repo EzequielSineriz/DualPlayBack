@@ -32,6 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        // ⛔ Ignorar rutas del H2 Console
+        if (request.getServletPath().startsWith("/h2-console")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);

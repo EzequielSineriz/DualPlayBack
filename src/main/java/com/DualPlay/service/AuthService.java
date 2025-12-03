@@ -31,15 +31,27 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public TokenResponse register(final RegisterRequest request) {
-        Rol rolEnum = Rol.valueOf(request.role().toUpperCase());
+
+        String roleValue = (request.role() == null || request.role().isBlank())
+                ? "CUSTOMER"
+                : request.role().toUpperCase();
+
+        Rol roleEnum;
+
+        try {
+            roleEnum = Rol.valueOf(roleValue);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid role: " + roleValue);
+        }
         final User user = User.builder()
                 .username(request.username())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .roles(Set.of(rolEnum))
+                .roles(Set.of(roleEnum))
                 .build();
 
         final User savedUser = repository.save(user);
+
         final String jwtToken = jwtService.generateToken(savedUser);
         final String refreshToken = jwtService.generateRefreshToken(savedUser);
 
