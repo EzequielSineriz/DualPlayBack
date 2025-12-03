@@ -1,6 +1,7 @@
-package com.DualPlay.dtos;
+package com.DualPlay.dtos.response;
 
-public record BoardGameReqDTO (
+public record BoardGameRespDTO (
+        Long id,
         String name,
         String description,
         Double price,
@@ -9,4 +10,4 @@ public record BoardGameReqDTO (
         Integer minPlayers,
         Integer maxPlayers,
         Integer recommendedAge
-){}
+) {}

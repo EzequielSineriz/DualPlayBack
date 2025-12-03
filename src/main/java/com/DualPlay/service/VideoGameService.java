@@ -1,0 +1,66 @@
+package com.DualPlay.service;
+
+import com.DualPlay.dtos.request.VideoGameReqDTO;
+import com.DualPlay.dtos.response.VideoGameRespDTO;
+import com.DualPlay.entities.TypeOfProduct;
+import com.DualPlay.entities.VideoGame;
+import com.DualPlay.mappers.VideoGameMapper;
+import com.DualPlay.repository.VideoGameRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class VideoGameService {
+
+    private final VideoGameRepository videoGameRepository;
+
+    private final VideoGameMapper videoGameMapper;
+
+    //CREATE
+    public VideoGameRespDTO create(VideoGameReqDTO dto){
+        VideoGame game = videoGameMapper.toEntity(dto);
+        videoGameRepository.save(game);
+        return videoGameMapper.toVideoGameRespDTO(game);
+    }
+
+    public VideoGameRespDTO getById(Long id){
+        VideoGame game = videoGameRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("VideoGame not found"));
+
+        return videoGameMapper.toVideoGameRespDTO(game);
+    }
+
+    public List<VideoGameRespDTO> getAll(){
+        return videoGameRepository.findAll()
+                .stream()
+                .map(videoGameMapper::toVideoGameRespDTO)
+                .toList();
+    }
+
+    public VideoGameRespDTO update(Long id, VideoGameReqDTO dto) {
+        VideoGame game = videoGameRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("VideoGame not found"));
+
+        game.setName(dto.name());
+        game.setDescription(dto.description());
+        game.setPrice(dto.price());
+        game.setStock(dto.stock());
+        game.setImageUrl(dto.imageUrl());
+        game.setPlatform(dto.platform());
+        game.setGenre(dto.genre());
+        game.setType(TypeOfProduct.VIDEOGAME); // siempre
+
+        videoGameRepository.save(game);
+
+        return videoGameMapper.toVideoGameRespDTO(game);
+    }
+
+    public void delete(Long id){
+        if(!videoGameRepository.existsById(id)){
+            throw new RuntimeException("VideoGame Not Found");
+        }
+    }
+}
