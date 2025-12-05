@@ -23,7 +23,7 @@ public record VideoGameReqDTO(
 
 
         @NotBlank(message = "The image must have a path")
-        @Size(min = 2, max = 20)
+        @Size(min = 2, max = 255)
         String imageUrl,
 
         @NotBlank(message = "It must belong to a valid platform")

@@ -20,4 +20,5 @@ public class BoardGame extends Product{
     private Integer maxPlayers;
     private Integer recommendedAge;
 
+
 }

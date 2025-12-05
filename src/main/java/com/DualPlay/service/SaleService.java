@@ -50,7 +50,7 @@ public class SaleService {
 
         double totalAmount = dto.items().stream().mapToDouble(itemDTO -> {
 
-            Product product = productService.findById(itemDTO.productId());
+            Product product = productService.findByIdEntity(itemDTO.productId());
 
             if (product.getStock() < itemDTO.quantity()) {
                 throw new RuntimeException("Not enough stock for product: " + product.getName());

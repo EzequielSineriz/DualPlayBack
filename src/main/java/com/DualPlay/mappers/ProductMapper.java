@@ -18,7 +18,8 @@ public class ProductMapper {
                 product.getPrice(),
                 product.getStock(),
                 product.getImageUrl(),
-                product.getType().name()
+                product.getType().name(),
+                product.isActive()
         );
     }
 
@@ -29,5 +30,6 @@ public class ProductMapper {
         product.setStock(dto.stock());
         product.setImageUrl(dto.imageUrl());
         product.setType(TypeOfProduct.valueOf(dto.type()));
+
     }
 }

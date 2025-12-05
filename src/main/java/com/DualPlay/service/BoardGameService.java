@@ -9,8 +9,15 @@ import com.DualPlay.mappers.BoardGameMapper;
 import com.DualPlay.repository.BoardGameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +25,25 @@ public class BoardGameService {
 
     private final BoardGameRepository boardGameRepository;
     private final BoardGameMapper boardGameMapper;
+
+    private final String uploadDir = "uploads/boardgames";
+
+    // Metodo para guardar la imagen en disco
+    public String saveImage(MultipartFile file) throws IOException {
+        if (file.isEmpty()) return null;
+
+        Path uploadPath = Paths.get(uploadDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path filePath = uploadPath.resolve(filename);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        // Retornamos URL relativa
+        return "/uploads/boardgames/" + filename;
+    }
 
     // CREATE
     public BoardGameRespDTO create(BoardGameReqDTO dto) {

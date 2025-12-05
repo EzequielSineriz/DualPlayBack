@@ -1,14 +1,18 @@
 package com.DualPlay.controllers;
 
 import com.DualPlay.dtos.request.BoardGameReqDTO;
+import com.DualPlay.dtos.request.VideoGameReqDTO;
 import com.DualPlay.dtos.response.BoardGameRespDTO;
+import com.DualPlay.dtos.response.VideoGameRespDTO;
 import com.DualPlay.service.BoardGameService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -46,6 +50,39 @@ public class BoardGameController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         boardGameService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Endpoint para crear VideoGame con imagen
+    @PostMapping("/upload")
+    public ResponseEntity<BoardGameRespDTO> createWithImage(
+            @RequestParam String name,
+            @RequestParam String description,
+            @RequestParam double price,
+            @RequestParam int stock,
+            @RequestParam Integer minPlayers,
+            @RequestParam Integer maxPlayers,
+            @RequestParam Integer recommendedAge,
+            @RequestParam("image") MultipartFile image
+    ) throws IOException {
+        // 1. Guardamos la imagen PRIMERO para obtener la URL
+        String imageUrl = boardGameService.saveImage(image);
+        String type = "BOARDGAME";
+
+        BoardGameReqDTO dto = new BoardGameReqDTO(
+                name,
+                description,
+                price,
+                stock,
+                imageUrl,
+                minPlayers,
+                maxPlayers,
+                recommendedAge,
+                type
+        );
+
+        // 3. Procedemos con la lógica de negocio
+        BoardGameRespDTO response = boardGameService.create(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
 

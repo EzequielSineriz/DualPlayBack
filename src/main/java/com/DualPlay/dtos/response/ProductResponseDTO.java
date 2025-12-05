@@ -7,7 +7,8 @@ public record ProductResponseDTO(
      Double  price,
      Integer stock,
      String imageUrl,
-     String type
+     String type,
+     Boolean active
 
 ) {
 }

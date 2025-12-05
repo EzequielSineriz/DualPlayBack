@@ -32,4 +32,7 @@ public abstract class Product {
 
     @Enumerated(EnumType.STRING)
     private TypeOfProduct type;
+
+    private boolean active = true;
+
 }
